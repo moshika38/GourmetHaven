@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/context/CartContext";
 import { Toaster } from "sonner";
+import ClientProviders from "@/context/Providers/Providers";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -12,7 +12,8 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Gourmet Haven | Premium Local Flavors",
-  description: "Experience the best local cuisine with our modern ordering experience.",
+  description:
+    "Experience the best local cuisine with our modern ordering experience.",
 };
 
 export default function RootLayout({
@@ -22,13 +23,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${outfit.variable} font-sans antialiased min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground`}>
-        <CartProvider>
+      <body
+        className={`${outfit.variable} font-sans antialiased min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground`}
+      >
+        <ClientProviders>
           {children}
           <Toaster position="top-center" richColors theme="dark" closeButton />
-        </CartProvider>
+        </ClientProviders>
       </body>
     </html>
   );
 }
-
