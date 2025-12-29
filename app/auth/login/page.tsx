@@ -154,7 +154,7 @@ export default function LoginPage() {
                 className="w-full cursor-pointer bg-white text-black hover:bg-zinc-200 border-transparent h-12 text-base shadow-sm relative overflow-hidden group transition-all duration-300 hover:shadow-md"
                 onClick={() => handleGoogleSignIn()}
               >
-                <div className="absolute inset-y-0 left-20 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-10 flex items-center pointer-events-none">
                   <svg
                     className="h-5 w-5"
                     viewBox="0 0 24 24"
