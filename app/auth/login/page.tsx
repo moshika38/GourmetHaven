@@ -8,29 +8,59 @@ import Footer from "@/components/Footer";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  
+} from "firebase/auth";
 import { auth } from "@/config/firebase";
+
 const provider = new GoogleAuthProvider();
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
-
-  
-
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Mock login
-    setTimeout(() => setIsLoading(false), 2000);
+
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passInput = document.getElementById("password") as HTMLInputElement;
+
+    if (emailInput.value === "" || passInput.value === "") {
+      toast.error("Please fill all fields");
+      setIsLoading(false);
+      return;
+    } else {
+      signInWithEmailAndPassword(auth, emailInput.value, passInput.value)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          toast.success(`Signed in Successfully`);
+          user.emailVerified ? router.push("/") : router.push("/auth/verify");
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setIsLoading(false);
+
+          if (errorMessage === "Firebase: Error (auth/invalid-credential).") {
+            toast.error("Invalid email or password");
+          } else {
+            toast.error(errorMessage.split(":")[1]);
+          }
+        });
+    }
   };
 
   const handleGoogleSignIn = async () => {
-    
     setIsLoading(true);
     signInWithPopup(auth, provider)
-    .then((result) => {
+      .then((result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential!.accessToken;
         const user = result.user;
@@ -38,7 +68,7 @@ export default function LoginPage() {
           setIsLoading(false);
           // display success message
           toast.success(`Signed in successfully`);
-           router.push("/");
+          router.push("/");
         }
       })
       .catch((error) => {
@@ -72,7 +102,12 @@ export default function LoginPage() {
                 <label htmlFor="email" className="text-sm font-medium">
                   Email
                 </label>
-                <Input id="email" type="email" placeholder="name@example.com" />
+                <Input
+                  id="email"
+                  type="email"
+                  className="mt-1"
+                  placeholder="name@example.com"
+                />
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
@@ -86,7 +121,12 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <Input id="password" type="password" placeholder="••••••••" />
+                <Input
+                  id="password"
+                  type="password"
+                  className="mt-1"
+                  placeholder="••••••••"
+                />
               </div>
 
               <Button

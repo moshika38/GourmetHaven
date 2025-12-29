@@ -57,10 +57,17 @@ export default function Navbar() {
           </Link>
 
           {user != null ? (
-            <Link href="/profile">
-              <FaUserCircle className="hidden sm:block w-8 h-8 mr-3" />
-              <FaUserCircle className="block sm:hidden w-6 h-6 " />
-            </Link>
+            user.emailVerified ? (
+              <Link href="/profile">
+                <FaUserCircle className="hidden sm:block w-8 h-8 mr-3" />
+                <FaUserCircle className="block sm:hidden w-6 h-6 " />
+              </Link>
+            ) : (
+              <Link href="/auth/verify">
+                <FaUserCircle className="hidden sm:block w-8 h-8 mr-3" />
+                <FaUserCircle className="block sm:hidden w-6 h-6 " />
+              </Link>
+            )
           ) : (
             <Link href="/auth/login" className="hidden sm:block">
               <Button size="sm">

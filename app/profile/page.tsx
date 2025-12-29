@@ -17,10 +17,14 @@ export default function ProfilePage() {
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
 
+
+
+
+
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth/login");
-    }
+    } 
   }, [user, loading, router]);
 
   const handleSignOut = async () => {

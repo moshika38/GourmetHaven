@@ -1,92 +1,145 @@
 "use client";
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { useState } from 'react';
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+import { toast } from "sonner";
+import { auth } from "@/config/firebase";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Mock register
-    setTimeout(() => setIsLoading(false), 2000);
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passInput = document.getElementById("password") as HTMLInputElement;
+    const lastNameInput = document.getElementById("last") as HTMLInputElement;
+    const firstNameInput = document.getElementById("first") as HTMLInputElement;
+
+    if (
+      emailInput.value === "" ||
+      passInput.value === "" ||
+      lastNameInput.value === "" ||
+      firstNameInput.value === ""
+    ) {
+      setIsLoading(false);
+      toast.error("Please fill all fields");
+      return;
+    } else {
+      createUserWithEmailAndPassword(auth, emailInput.value, passInput.value)
+        .then(async (userCredential) => {
+          const user = userCredential.user;
+          toast.success("Account Created Successfully");
+          // Send verification email
+          await sendEmailVerification(user);
+          router.push("/auth/verify");
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          if (errorCode === "auth/email-already-in-use") {
+            toast.error("Email already in use, try logging in");
+          } else {
+            toast.error(errorMessage.split(":")[1].split("(")[0]);
+          }
+          setIsLoading(false);
+        });
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <main className="flex-grow flex items-center justify-center p-4 relative mt-15">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('/featured-coffee.png')] opacity-5 bg-cover bg-center pointer-events-none" />
-        
+
         <div className="w-full max-w-md relative z-10 animate-slide-up">
-           <div className="bg-card/80 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl">
+          <div className="bg-card/80 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold mb-2">Create Account</h1>
-              <p className="text-muted-foreground">Join us for exclusive offers</p>
+              <p className="text-muted-foreground">
+                Join us for exclusive offers
+              </p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-2">
-                  <label htmlFor="first" className="text-sm font-medium">First Name</label>
-                  <Input id="first" placeholder="John" />
+                <div className="space-y-2">
+                  <label htmlFor="first" className="text-sm font-medium ">
+                    First Name
+                  </label>
+                  <Input id="first" placeholder="John" className="mt-1" />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="last" className="text-sm font-medium">Last Name</label>
-                  <Input id="last" placeholder="Doe" />
+                  <label htmlFor="last" className="text-sm font-medium">
+                    Last Name
+                  </label>
+                  <Input id="last" placeholder="Doe" className="mt-1" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">Email</label>
-                <Input id="email" type="email" placeholder="name@example.com" />
+                <label htmlFor="email" className="text-sm font-medium">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  className="mt-1"
+                />
               </div>
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium">Password</label>
-                <Input id="password" type="password" placeholder="••••••••" />
+                <label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  className="mt-1"
+                />
               </div>
-              
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={isLoading}
+              >
                 {isLoading ? "Creating Account..." : "Sign Up"}
               </Button>
-
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-muted/50"></span>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                </div>
-              </div>
-
-              <Button type="button" className="w-full bg-white text-black hover:bg-zinc-200 border-transparent h-12 text-base shadow-sm relative overflow-hidden group transition-all duration-300 hover:shadow-md" onClick={() => {}}>
-                <div className="absolute inset-y-0 left-20 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                  </svg>
-                </div>
-                <span className="font-semibold">Continue with Google</span>
-              </Button>
             </form>
-            
+
             <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">Already have an account? </span>
-              <Link href="/auth/login" className="text-primary hover:underline font-medium">
+              <span className="text-muted-foreground">
+                Already have an account?{" "}
+              </span>
+              <Link
+                href="/auth/login"
+                className="text-primary hover:underline font-medium"
+              >
                 Sign in
               </Link>
             </div>
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

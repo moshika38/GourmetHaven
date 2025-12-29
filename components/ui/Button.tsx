@@ -23,7 +23,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
           {
-            'bg-primary text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/25': variant === 'default',
+            'bg-primary cursor-pointer text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/25': variant === 'default',
             'border border-input bg-transparent hover:bg-muted hover:text-foreground': variant === 'outline',
             'hover:bg-muted hover:text-foreground': variant === 'ghost',
             'bg-secondary text-secondary-foreground hover:opacity-80': variant === 'secondary',
