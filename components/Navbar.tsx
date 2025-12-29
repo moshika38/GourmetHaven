@@ -11,7 +11,7 @@ export default function Navbar() {
   const { user, loading } = useAuth();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   return (
     <header className="fixed top-0 w-full z-50 glass border-b border-white/10">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -26,22 +26,22 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden sm:flex items-center gap-8">
           <Link
             href="/"
-            className="text-sm font-medium hover:text-primary transition-colors"
+            className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap"
           >
             Home
           </Link>
           <Link
             href="/menu"
-            className="text-sm font-medium hover:text-primary transition-colors"
+            className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap"
           >
             Menu
           </Link>
           <Link
             href="/about"
-            className="text-sm font-medium hover:text-primary transition-colors"
+            className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap"
           >
             About
           </Link>
@@ -57,12 +57,12 @@ export default function Navbar() {
           </Link>
 
           {user != null ? (
-            <Link href="/">
-              <FaUserCircle className="hidden md:block w-8 h-8 mr-3" />
-              <FaUserCircle className="block md:hidden w-6 h-6 " />
+            <Link href="/profile">
+              <FaUserCircle className="hidden sm:block w-8 h-8 mr-3" />
+              <FaUserCircle className="block sm:hidden w-6 h-6 " />
             </Link>
           ) : (
-            <Link href="/auth/login" className="hidden md:block">
+            <Link href="/auth/login" className="hidden sm:block">
               <Button size="sm">
                 <User className="w-4 h-4 mr-2" />
                 Sign In
@@ -73,7 +73,7 @@ export default function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="sm:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <Menu className="w-5 h-5" />
@@ -83,7 +83,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-white/10 bg-black/95 backdrop-blur-xl p-4 flex flex-col gap-4 animate-slide-up">
+        <div className="sm:hidden border-t border-white/10 bg-black/95 backdrop-blur-xl p-4 flex flex-col gap-4 animate-slide-up">
           <Link
             href="/"
             className="text-sm font-medium hover:text-primary transition-colors"
