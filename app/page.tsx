@@ -236,12 +236,12 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link href="/auth/register">
+                <Link href={user != null ? "/cart" : "/auth/register"}>
                   <Button
                     size="lg"
                     className="h-14 px-8 text-lg rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300"
                   >
-                    Create Account
+                    {user != null ? "View Cart" : "Create Account"}
                   </Button>
                 </Link>
                 <Link href="/menu">
