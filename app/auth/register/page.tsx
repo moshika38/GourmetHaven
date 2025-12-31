@@ -16,6 +16,7 @@ import {
 } from "firebase/auth";
 import { toast } from "sonner";
 import { auth } from "@/config/firebase";
+import axios from "axios";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,9 +43,26 @@ export default function RegisterPage() {
       createUserWithEmailAndPassword(auth, emailInput.value, passInput.value)
         .then(async (userCredential) => {
           const user = userCredential.user;
-          toast.success("Account Created Successfully");
+
+          // create user collection
+          const res = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uid: user.uid,
+              email: emailInput.value,
+              name: firstNameInput.value + " " + lastNameInput.value,
+            }),
+          });
+          if (res.status != 201) {
+            toast.error("User added faild !");
+          }
+
           // Send verification email
           await sendEmailVerification(user);
+          toast.success("Account Created Successfully");
           router.push("/auth/verify");
           setIsLoading(false);
         })
@@ -54,7 +72,7 @@ export default function RegisterPage() {
           if (errorCode === "auth/email-already-in-use") {
             toast.error("Email already in use, try logging in");
           } else {
-            toast.error(errorMessage.split(":")[1].split("(")[0]);
+            toast.error(errorMessage);
           }
           setIsLoading(false);
         });

@@ -8,12 +8,12 @@ import Footer from "@/components/Footer";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import axios from "axios";
 import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  
 } from "firebase/auth";
 import { auth } from "@/config/firebase";
 
@@ -51,7 +51,7 @@ export default function LoginPage() {
           if (errorMessage === "Firebase: Error (auth/invalid-credential).") {
             toast.error("Invalid email or password");
           } else {
-            toast.error(errorMessage.split(":")[1]);
+            toast.error(errorMessage);
           }
         });
     }
@@ -60,11 +60,27 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential!.accessToken;
         const user = result.user;
         if (user) {
+
+           const res = await fetch("/api/users", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        uid: user.uid,
+                        email: user.email,
+                        name: user.displayName,
+                      }),
+                    });
+                    if (res.status != 201) {
+                      toast.error("User added faild !");
+                    }
+
           setIsLoading(false);
           // display success message
           toast.success(`Signed in successfully`);

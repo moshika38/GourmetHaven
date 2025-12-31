@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 export default function Navbar() {
   const { user, loading } = useAuth();
@@ -56,18 +57,33 @@ export default function Navbar() {
             </Button>
           </Link>
 
-          {user != null ? (
-            user.emailVerified ? (
-              <Link href="/profile">
-                <FaUserCircle className="hidden sm:block w-8 h-8 mr-3" />
-                <FaUserCircle className="block sm:hidden w-6 h-6 " />
-              </Link>
-            ) : (
-              <Link href="/auth/verify">
-                <FaUserCircle className="hidden sm:block w-8 h-8 mr-3" />
-                <FaUserCircle className="block sm:hidden w-6 h-6 " />
-              </Link>
-            )
+          {loading ? (
+            // Loading skeleton
+            <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+          ) : user != null ? (
+            <Link
+              href={user.emailVerified ? "/profile" : "/auth/verify"}
+              className="group relative"
+              aria-label={user.emailVerified ? "Go to profile" : "Verify email"}
+            >
+              {user.photoURL ? (
+                <Image
+                  src={user.photoURL}
+                  alt={user.displayName || "User profile"}
+                  width={32}
+                  height={32}
+                  className="rounded-full ring-2 ring-transparent group-hover:ring-primary transition-all duration-200"
+                />
+              ) : (
+                <FaUserCircle className="w-8 h-8 text-white/80 group-hover:text-primary transition-colors duration-200" />
+              )}
+              {!user.emailVerified && (
+                <span
+                  className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full border-2 border-black"
+                  title="Email not verified"
+                />
+              )}
+            </Link>
           ) : (
             <Link href="/auth/login" className="hidden sm:block">
               <Button size="sm">

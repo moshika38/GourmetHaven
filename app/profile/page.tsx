@@ -11,20 +11,17 @@ import Loading from "@/components/ui/Loading";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { User, Mail, Calendar, LogOut } from "lucide-react";
+import Image from "next/image";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
 
-
-
-
-
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth/login");
-    } 
+    }
   }, [user, loading, router]);
 
   const handleSignOut = async () => {
@@ -87,7 +84,17 @@ export default function ProfilePage() {
                   <div className="relative mb-6">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-orange-600 rounded-full blur-2xl opacity-40 animate-pulse" />
                     <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-primary via-orange-500 to-orange-600 flex items-center justify-center text-5xl font-bold text-white shadow-2xl shadow-primary/30 ring-4 ring-white/20">
-                      {getInitials(user.email || "U")}
+                      {user.photoURL ? (
+                        <Image
+                          src={user.photoURL}
+                          alt="user"
+                          width={128}
+                          height={128}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        getInitials(user.email || "U")
+                      )}
                     </div>
                   </div>
 
