@@ -65,21 +65,20 @@ export default function LoginPage() {
         const token = credential!.accessToken;
         const user = result.user;
         if (user) {
-
-           const res = await fetch("/api/users", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        uid: user.uid,
-                        email: user.email,
-                        name: user.displayName,
-                      }),
-                    });
-                    if (res.status != 201) {
-                      toast.error("User added faild !");
-                    }
+          const res = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uid: user.uid,
+              email: user.email,
+              name: user.displayName,
+            }),
+          });
+          if (res.status != 201) {
+            toast.error("User added faild !");
+          }
 
           setIsLoading(false);
           // display success message
