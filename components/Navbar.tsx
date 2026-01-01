@@ -46,11 +46,25 @@ export default function Navbar() {
           >
             About
           </Link>
+          <Link
+            href="/contact"
+            className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap"
+          >
+            Contact
+          </Link>
         </nav>
 
         {/* Actions */}
         <div className="flex items-center gap-4">
-          <Link href="/cart">
+          <Link
+            href={
+              user
+                ? user.emailVerified
+                  ? "/cart"
+                  : "/auth/verify"
+                : "/auth/login"
+            }
+          >
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingBag className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
@@ -124,6 +138,12 @@ export default function Navbar() {
             className="text-sm font-medium hover:text-primary transition-colors"
           >
             About
+          </Link>
+          <Link
+            href="/contact"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            Contact
           </Link>
 
           <Link
